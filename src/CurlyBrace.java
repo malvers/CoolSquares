@@ -13,17 +13,19 @@ public class CurlyBrace {
     CubicCurve2D shape1 = new CubicCurve2D.Float();
     CubicCurve2D shape2 = new CubicCurve2D.Float();
 
-    public CurlyBrace(Point pIn, int length) {
+    public CurlyBrace(Point pIn, int length, int width) {
 
-        if( pIn == null || length <=0 ) return;
+        if (pIn == null || length <= 0) {
+            return;
+        }
 
         p1 = pIn;
-        int width = length / 12;
+//        int width = length / 12;
 
         init(length, width);
     }
 
-    public void  init(int length, int width) {
+    public void init(int length, int width) {
 
         ti = new Point(p1.x + width, p1.y + length / 2);
         p3 = new Point(p1.x, p1.y + length);
@@ -41,10 +43,12 @@ public class CurlyBrace {
 
     public void draw(Graphics g, boolean drawControlPoints) {
 
-        Graphics2D g2 = (Graphics2D)g;
+        Graphics2D g2 = (Graphics2D) g;
         g2.draw(shape1);
         g2.draw(shape2);
-        if(drawControlPoints) drawControlPoints(g2, p1, ti, p3, c1, c2, c3, c4);
+        if (drawControlPoints) {
+            drawControlPoints(g2, p1, ti, p3, c1, c2, c3, c4);
+        }
     }
 
     private void drawControlPoints(Graphics2D g, Point p1, Point tip, Point p3, Point c1, Point c2, Point c3, Point c4) {
