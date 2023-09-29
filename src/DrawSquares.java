@@ -1,6 +1,10 @@
+import com.sun.javafx.scene.paint.GradientUtils;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.geom.CubicCurve2D;
+import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 
 public class DrawSquares extends JButton implements KeyListener, MouseListener, MouseMotionListener {
@@ -16,6 +20,8 @@ public class DrawSquares extends JButton implements KeyListener, MouseListener, 
     private boolean drawAxis = true;
     private int size;
 
+    private CurlyBrace cb = null;
+
     public DrawSquares(JFrame frame) {
         myFrame = frame;
         addKeyListener(this);
@@ -27,6 +33,7 @@ public class DrawSquares extends JButton implements KeyListener, MouseListener, 
     public void paint(Graphics gIn) {
 
         Graphics2D g = (Graphics2D) gIn;
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
         g.setFont(new Font("Arial", Font.PLAIN, 12));
 
@@ -90,6 +97,13 @@ public class DrawSquares extends JButton implements KeyListener, MouseListener, 
         if (drawAnnotation) {
             drawAnnotations(g, originX, originY);
         }
+
+        Point p1 = new Point(150, 100);
+
+        cb = new CurlyBrace(new Point(100, 100), 200);
+
+        cb.draw(g, true);
+
     }
 
     private void drawAnnotations(Graphics2D g, int originX, int originY) {
@@ -100,7 +114,7 @@ public class DrawSquares extends JButton implements KeyListener, MouseListener, 
         Rectangle2D b;
 
         /// draw x ///////////////////////////////////
-        if(drawAxis) {
+        if (drawAxis) {
 
             g.setColor(new Color(160, 0, 0));
             g.setStroke(new BasicStroke(2));
@@ -109,7 +123,7 @@ public class DrawSquares extends JButton implements KeyListener, MouseListener, 
         }
 
         /// draw y ///////////////////////////////////
-        if(drawAxis) {
+        if (drawAxis) {
             g.setColor(new Color(0, 0, 80));
             g.setStroke(new BasicStroke(2));
 
@@ -124,11 +138,11 @@ public class DrawSquares extends JButton implements KeyListener, MouseListener, 
         str = "" + (aa * 4 * aa * 4);
         b = g.getFontMetrics().getStringBounds(str, g).getBounds();
         g.setColor(new Color(0, 0, 80));
-        g.drawString(str, (int) (originX + a + a*2 -b.getWidth()/2 ), originY - x - (2 * a) + 4);
+        g.drawString(str, (int) (originX + a + a * 2 - b.getWidth() / 2), originY - x - (2 * a) + 4);
 
         /// draw a ///////////////////////////////////
         str = "a = " + a / 10;
-        if(drawAxis) {
+        if (drawAxis) {
             g.setFont(new Font("Arial", Font.PLAIN, 12));
             g.setColor(new Color(0, 0, 80));
             g.setStroke(new BasicStroke(2));
@@ -143,6 +157,8 @@ public class DrawSquares extends JButton implements KeyListener, MouseListener, 
         b = g.getFontMetrics().getStringBounds(str, g).getBounds();
         g.setColor(new Color(0, 0, 80));
         g.drawString("" + val, (int) (originX + (a / 2) - (b.getWidth() / 2.0)), originY + a / 2 + 6);
+
+        g.setStroke(new BasicStroke(1));
     }
 
     public static void main(String[] args) {
