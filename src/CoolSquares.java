@@ -1,14 +1,15 @@
-import com.sun.javafx.scene.paint.GradientUtils;
-
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.geom.CubicCurve2D;
-import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
-public class DrawSquares extends JButton implements KeyListener, MouseListener, MouseMotionListener {
+public class CoolSquares extends JButton implements KeyListener, MouseListener, MouseMotionListener {
 
+    private BufferedImage image;
     private JFrame myFrame = null;
     int x = 120;
     int a = 80;
@@ -22,20 +23,36 @@ public class DrawSquares extends JButton implements KeyListener, MouseListener, 
 
     private CurlyBrace cb = null;
 
-    public DrawSquares(JFrame frame) {
+    public CoolSquares(JFrame frame) {
         myFrame = frame;
         addKeyListener(this);
         addMouseMotionListener(this);
         addMouseListener(this);
+
+        try {
+            image = ImageIO.read(new File("clouds.jpg"));
+        } catch (IOException e) {
+            System.out.println("clouds not found :-/");
+        }
+
         repaint();
     }
 
     public void paint(Graphics gIn) {
 
-        Graphics2D g2 = (Graphics2D) gIn;
-        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        Graphics2D g2d = (Graphics2D) gIn;
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        g2.setFont(new Font("Arial", Font.PLAIN, 12));
+        if (image != null) {
+            float alpha = 0.5f; // Adjust this value between 0.0f (fully transparent) and 1.0f (fully opaque)
+            AlphaComposite alphaComposite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha);
+            g2d.setComposite(alphaComposite);
+            g2d.drawImage((Image) image, 0, 0, image.getWidth() / 2, (int) (image.getHeight() / 1.8), Color.BLACK, this);
+            alpha = 0.85f; // Adjust this value between 0.0f (fully transparent) and 1.0f (fully opaque)
+            alphaComposite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha);
+            g2d.setComposite(alphaComposite);
+        }
+        g2d.setFont(new Font("Arial", Font.PLAIN, 12));
 
         int grey = 160;
 
@@ -46,60 +63,60 @@ public class DrawSquares extends JButton implements KeyListener, MouseListener, 
         int posY = originY;
 
         /// draw center ///////////////////////////////
-        g2.setColor(Color.ORANGE);
-        g2.fillRect(posX, posY, a, a);
+        g2d.setColor(Color.ORANGE);
+        g2d.fillRect(posX, posY, a, a);
 
         /// draw first to the right of center ////////
         posX = originX + a;
         posY = (int) (originY - x);
         size = (int) (a + x);
-        g2.setColor(new Color(190, 215, 240));
-        g2.fillRect(posX, posY, size, size);
-        g2.setColor(new Color(grey, grey, grey));
-        g2.drawRect(posX, posY, size, size);
+        g2d.setColor(new Color(190, 215, 240));
+        g2d.fillRect(posX, posY, size, size);
+        g2d.setColor(new Color(grey, grey, grey));
+        g2d.drawRect(posX, posY, size, size);
 
         /// draw first below center //////////////////
         posX = originX;
         posY = originY + a;
         size = (int) (2 * a + x);
-        g2.setColor(new Color(190, 215, 240));
-        g2.fillRect(posX, posY, size, size);
-        g2.setColor(new Color(grey, grey, grey));
-        g2.drawRect(posX, posY, size, size);
+        g2d.setColor(new Color(190, 215, 240));
+        g2d.fillRect(posX, posY, size, size);
+        g2d.setColor(new Color(grey, grey, grey));
+        g2d.drawRect(posX, posY, size, size);
 
         /// draw lower left below center /////////////
         size = (int) (3 * a + x);
         posX = originX - size;
         posY = originY;
-        g2.setColor(new Color(190, 215, 240));
-        g2.fillRect(posX, posY, size, size);
-        g2.setColor(new Color(grey, grey, grey));
-        g2.drawRect(posX, posY, size, size);
+        g2d.setColor(new Color(190, 215, 240));
+        g2d.fillRect(posX, posY, size, size);
+        g2d.setColor(new Color(grey, grey, grey));
+        g2d.drawRect(posX, posY, size, size);
 
         /// draw upper left below center /////////////
         posX = originX - size;
         posY = originY - size - a;
         size = (int) (4 * a + x);
-        g2.setColor(new Color(190, 215, 240));
-        g2.fillRect(posX, posY, size, size);
-        g2.setColor(new Color(grey, grey, grey));
-        g2.drawRect(posX, posY, size, size);
+        g2d.setColor(new Color(190, 215, 240));
+        g2d.fillRect(posX, posY, size, size);
+        g2d.setColor(new Color(grey, grey, grey));
+        g2d.drawRect(posX, posY, size, size);
 
         /// draw green ///////////////////////////////
         posX = originX + a;
         posY = originY - size;
         size = 4 * a;
-        g2.setColor(new Color(146, 208, 80));
-        g2.fillRect(posX, posY, size, size);
-        g2.setColor(new Color(grey, grey, grey));
-        g2.drawRect(posX, posY, size, size);
+        g2d.setColor(new Color(146, 208, 80));
+        g2d.fillRect(posX, posY, size, size);
+        g2d.setColor(new Color(grey, grey, grey));
+        g2d.drawRect(posX, posY, size, size);
 
         if (drawAnnotation) {
-            drawAnnotations(g2, originX, originY);
+            drawAnnotations(g2d, originX, originY);
         }
     }
 
-    private void drawAnnotations(Graphics2D g2, int originX, int originY) {
+    private void drawAnnotations(Graphics2D g2d, int originX, int originY) {
 
         int aa = a / 10;
         int val = aa * aa;
@@ -109,17 +126,17 @@ public class DrawSquares extends JButton implements KeyListener, MouseListener, 
         /// draw x ///////////////////////////////////
         if (drawAxis) {
 
-            g2.setColor(new Color(160, 0, 0));
-//            g2.setStroke(new BasicStroke(2));
-//            g2.setColor(new Color(0, 0, 40));
-            g2.drawLine(originX + a, originY, originX + a, (int) (originY - x));
-            g2.drawString("x = " + x / 10, originX + a + 14, (int) (originY - x / 2 + 5));
+            g2d.setColor(new Color(160, 0, 0));
+//            g2d.setStroke(new BasicStroke(2));
+//            g2d.setColor(new Color(0, 0, 40));
+            g2d.drawLine(originX + a, originY, originX + a, (int) (originY - x));
+            g2d.drawString("x = " + x / 10, originX + a + 14, (int) (originY - x / 2 + 5));
 
             Point startBrace = new Point(originX + a, originY - x);
             cb = new CurlyBrace(startBrace, x, 12);
 
-            g2.setStroke(new BasicStroke(1));
-            cb.draw(g2, false);
+            g2d.setStroke(new BasicStroke(1));
+            cb.draw(g2d, false);
         }
 
         /// draw y ///////////////////////////////////
@@ -131,24 +148,24 @@ public class DrawSquares extends JButton implements KeyListener, MouseListener, 
 
             Point startBrace = new Point(originX + a, (int) (originY - x - 4 * a));
             cb = new CurlyBrace(startBrace, length, -12);
-            g2.setColor(new Color(0, 0, 40));
-            g2.setStroke(new BasicStroke(1));
-            cb.draw(g2, false);
+            g2d.setColor(new Color(0, 0, 40));
+            g2d.setStroke(new BasicStroke(1));
+            cb.draw(g2d, false);
 
 //            g2.setColor(new Color(0, 0, 80));
 
             str = "y = " + aa * 4;
-            b = g2.getFontMetrics().getStringBounds(str, g2).getBounds();
+            b = g2d.getFontMetrics().getStringBounds(str, g2d).getBounds();
 //            g2.drawLine(from.x, from.y, to.x, to.y);
-            g2.drawString(str, (int) (originX - b.getWidth() + a - 16), originY - x - (2 * a) + 4);
+            g2d.drawString(str, (int) (originX - b.getWidth() + a - 16), originY - x - (2 * a) + 4);
         }
 
         /// draw a area
-        g2.setFont(new Font("Arial", Font.PLAIN, 24));
+        g2d.setFont(new Font("Arial", Font.PLAIN, 24));
         str = "" + (aa * 4 * aa * 4);
-        b = g2.getFontMetrics().getStringBounds(str, g2).getBounds();
-//        g2.setColor(new Color(0, 0, 80));
-        g2.drawString(str, (int) (originX + a + a * 2 - b.getWidth() / 2), originY - x - (2 * a) + 4);
+        b = g2d.getFontMetrics().getStringBounds(str, g2d).getBounds();
+        g2d.setColor(new Color(0, 0, 40));
+        g2d.drawString(str, (int) (originX + a + a * 2 - b.getWidth() / 2), originY - x - (2 * a) + 4);
 
         /// draw a ///////////////////////////////////
         str = "a = " + a / 10;
@@ -158,36 +175,36 @@ public class DrawSquares extends JButton implements KeyListener, MouseListener, 
             cb = new CurlyBrace(startBrace, a, 12);
 //            g2.setColor(new Color(0, 0, 40));
 //            g2.setStroke(new BasicStroke(1));
-            cb.draw(g2, false);
+            cb.draw(g2d, false);
 
-            g2.setFont(new Font("Arial", Font.PLAIN, 12));
+            g2d.setFont(new Font("Arial", Font.PLAIN, 12));
 //            g2.setColor(new Color(0, 0, 80));
 //            g2.setStroke(new BasicStroke(2));
 
 //            g2.drawLine(originX + a, originY, originX + a, originY + a);
-            g2.drawString(str, originX + a + 14, originY + a / 2 + 4);
+            g2d.drawString(str, originX + a + 14, originY + a / 2 + 4);
         }
 
         /// draw a area
-        g2.setFont(new Font("Arial", Font.PLAIN, 14));
+        g2d.setFont(new Font("Arial", Font.PLAIN, 14));
         str = "" + val;
-        b = g2.getFontMetrics().getStringBounds(str, g2).getBounds();
-//        g2.setColor(new Color(0, 0, 80));
-        g2.drawString("" + val, (int) (originX + (a / 2) - (b.getWidth() / 2.0)), originY + a / 2 + 6);
+        b = g2d.getFontMetrics().getStringBounds(str, g2d).getBounds();
+        g2d.setColor(new Color(0, 0, 40));
+        g2d.drawString("" + val, (int) (originX + (a / 2) - (b.getWidth() / 2.0)), originY + a / 2 + 6);
 
-        g2.setStroke(new BasicStroke(1));
+        g2d.setStroke(new BasicStroke(1));
     }
 
     public static void main(String[] args) {
         JFrame frame = new JFrame();
-        DrawSquares drawSquares = new DrawSquares(frame);
-        frame.add(drawSquares);
+        CoolSquares coolSquares = new CoolSquares(frame);
+        frame.add(coolSquares);
         frame.setLocation(200, 400);
         frame.setSize(1200, 1000);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
-        drawSquares.setFrameTitle();
-        drawSquares.repaint();
+        coolSquares.setFrameTitle();
+        coolSquares.repaint();
     }
 
     @Override
